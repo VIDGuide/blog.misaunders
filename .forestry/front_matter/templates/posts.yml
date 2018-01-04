@@ -15,3 +15,6 @@ fields:
 - type: tag_list
   name: tags
   label: tags
+- type: tag_list
+  label: category
+  name: category
