@@ -1,5 +1,6 @@
 ---
 pages:
+- _posts/homelab-dashboard-with-grafana-influxdb-telefrag.md
 - _posts/so-what-s-involved-in-setting-up-a-static-blog-with-a-ui.md
 - _posts/2017-05-26-fibrechannel-comes-to-the-homelab.md
 - _posts/2017-05-03-tools-section-html-to-asp-converter.md
