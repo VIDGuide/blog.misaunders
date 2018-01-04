@@ -12,3 +12,6 @@ fields:
   type: text
   hidden: false
   default: post
+- type: tag_list
+  name: tags
+  label: tags
