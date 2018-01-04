@@ -100,3 +100,110 @@ Yes, that's the iDrac default username and password. Change that to suit your ow
 **Note**: SNMP is also supported by the iDrac, however you get virtually no meaningful data back from it that I can find. 
 
 Using this IPMI data however I'm showing input line voltage, current (amps), power consumption (watts), ECC error count, & fan speed.
+
+The IBM x3650 M2 I'm showing via SNMP. I believe it will also support IPMI over LAN, so there is potential for more data here. I'll expand on this if I get that to work. 
+
+This one is a bit messy to read, but pulls everything you see on the dashboard, and a little more.
+
+    [[inputs.snmp]]
+            agents = ["192.168.1.4:161" ]
+            version = 1
+            community = "public"
+            name = "IBMIMM"
+    
+            [[inputs.snmp.field]]
+                name = "hostname"
+                oid = "iso.3.6.1.2.1.1.6.0"
+                is_tag = true
+    
+            [[inputs.snmp.field]]
+                name = "temp"
+                oid = "iso.3.6.1.4.1.2.3.51.3.1.1.2.1.3.1"
+    
+            [[inputs.snmp.field]]
+                name = "33v"
+                oid = "iso.3.6.1.4.1.2.3.51.3.1.2.2.1.4.1"
+            [[inputs.snmp.field]]
+                name = "5v"
+                oid = "iso.3.6.1.4.1.2.3.51.3.1.2.2.1.4.2"
+            [[inputs.snmp.field]]
+                name = "12v"
+                oid = "iso.3.6.1.4.1.2.3.51.3.1.2.2.1.4.3"
+    
+            [[inputs.snmp.field]]
+                name = "FAN1A"
+                oid = "iso.3.6.1.4.1.2.3.51.3.1.3.2.1.3.1"
+            [[inputs.snmp.field]]
+                name = "FAN1B"
+                oid = "iso.3.6.1.4.1.2.3.51.3.1.3.2.1.3.2"
+            [[inputs.snmp.field]]
+                name = "FAN2A"
+                oid = "iso.3.6.1.4.1.2.3.51.3.1.3.2.1.3.3"
+            [[inputs.snmp.field]]
+                name = "FAN2B"
+                oid = "iso.3.6.1.4.1.2.3.51.3.1.3.2.1.3.4"
+            [[inputs.snmp.field]]
+                name = "FAN3A"
+                oid = "iso.3.6.1.4.1.2.3.51.3.1.3.2.1.3.5"
+            [[inputs.snmp.field]]
+                name = "FAN3B"
+                oid = "iso.3.6.1.4.1.2.3.51.3.1.3.2.1.3.6"
+
+Temperature is the ambient/intake temperature, and appears to be the only temperature this version of the IBM IMM tracks. Even the web interface only shows the single temperature. 3.3, 5 & 12v lines are reported here, but curiously, not input voltage, or consumption/wattage. 
+
+The fans were a bit of a disappointment here. I really wanted to graph those, and while SNMP gives me the data, in its raw format, it's not usable. It returns the fans as STRING's for some reason, with "33 %" as the value. I'm sure there are ways to pre-process this data, and strip/trim the " %" from the end, but I haven't gotten into that yet. I'm hoping that if I can get IPMI via LAN to work, I might get the fan speeds in a usable format natively. 
+
+And finally, the WAN speed test. This is one that I was really happy to be able to include. I'm currently doing it every 5 minutes, as I don't want to smash my bandwidth too much just on tests, but it's nice to have the data visible. Even just here in the last 24 hours, you can see how much it dropped at peak evening time! I'm not sure if I'll drop the interval back a bit as it moves forwards, I'm not actually sure how much data it consumes upon each test. 
+
+So, there is a linux tool called speedtest-cli. This is available on Ubuntu via apt-get, and should be easily available on other platforms without issue. It's just a nice simple wrapper for the speedtest service. 
+
+So I made up 2 scripts. I copied the base concept of this from something I found partly on another blog I can't recall now, but adapterd a bit to suit exactly what I needed.
+
+The first script is a loop script. You could also use a cron job to run the primary script every 5 minutes, but this works.
+
+    #!/usr/bin/env sh
+    
+    export INFLUXDB_DATABASE="speedtest"
+    export INFLUXDB_HOST="192.168.1.1"
+    export SPEEDTEST_FRQUENCY=300
+    export INFLUXDB_PORT=8086
+    export INFLUXDB_PASSWORD=""
+    export EXTRA_TAGS=""
+    
+    while [ 1 ]
+    do
+        logger Starting new test
+        /opt/scripts/speedtest.sh
+    
+        sleep $SPEEDTEST_FRQUENCY
+    done                   
+
+I launch this script on startup as a background thread, and basically all it does it call the actual speedtest script every 5 minutes. You can adjust the timing here, as well as the InfluxDB parameters.
+
+    #!/usr/bin/env sh
+    
+    timestamp=$(date +%s%N)
+    hostname=$(hostname)
+    
+    logger Current timestamp: $timestamp
+    
+    output=$(speedtest-cli --simple)
+    
+    logger Output: $output
+    
+    line=$(echo -n "$output" | awk '/Ping/ {print "ping=" $2} /Download/ {print "download=" $2 * 1000 * 1000} /Upload/ {print "upload=" $2 * 1000 * 1000}' | tr '\n' ',' | head -c -1)
+    curl -XPOST "http://$INFLUXDB_HOST:$INFLUXDB_PORT/write?db=$INFLUXDB_DATABASE" -d "speedtest,host=$hostname$EXTRA_TAGS $line $timestamp"
+    
+    logger New speedtest sent
+
+This one is the actual speedtest.sh script. This runs the speedtest-cli command, parses the response, and uses a HTTP POST to push the data into InfluxDB. 
+
+Then you can graph it just like any other metric. 
+
+![](/uploads/2018/01/04/Screen Shot 2018-01-04 at 8.47.49 pm.png)
+
+![](/uploads/2018/01/04/Screen Shot 2018-01-04 at 8.48.14 pm.png)
+
+What's next?
+
+ESXi, FreeNAS, HP Switch
