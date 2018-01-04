@@ -2,6 +2,14 @@
 layout: post
 title: Homelab Dashboard with Grafana, InfluxDB & Telegraf
 date: 2018-01-03 18:39:28 +0000
+categories:
+- homelab
+tags:
+- homelab
+- grafana
+- graphs
+- dashboard
+- hardware
 ---
 So it's been a while since I've had a chance to write anything here, but since it's the holiday break, and I'm off work for a while, it's been time to add new hardware to the rack, take care of things that have been needing to be done for a while, and really clean and tune things up.
 
