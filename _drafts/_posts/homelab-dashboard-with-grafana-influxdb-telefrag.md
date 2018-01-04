@@ -59,4 +59,30 @@ Repeat the above for the OutOctets. (You can duplicate panels in Grafana once yo
 
 We use an identical query for the WAN historical graphs. I actually made 2 queries, so that IN and OUT can be considered separate graphs, then you can push the OUT traffic to the right axis if you wish, and also apply a negative transform. Some people I've seen use a negative value in the math (\* -8 instead of \* 8), however this makes your values in the legend negative as well, which bothers me so using negative transform you get it to do up/down graphs, but still show proper values in the table.  
 
-![](/uploads/2018/01/04/Screen Shot 2018-01-04 at 8.09.04 pm.png)![](/uploads/2018/01/04/Screen Shot 2018-01-04 at 8.08.31 pm.png)![](/uploads/2018/01/04/Screen Shot 2018-01-04 at 8.08.49 pm.png)![](/uploads/2018/01/04/Screen Shot 2018-01-04 at 8.08.57 pm.png)
+![](/uploads/2018/01/04/Screen Shot 2018-01-04 at 8.09.04 pm.png)![](/uploads/2018/01/04/Screen Shot 2018-01-04 at 8.08.31 pm.png)![](/uploads/2018/01/04/Screen Shot 2018-01-04 at 8.08.49 pm.png)![](/uploads/2018/01/04/Screen Shot 2018-01-04 at 8.08.57 pm.png)The same logic and techniques are using to display the IP Camera & Wifi bandwidth. In my case I'm lucky that my router came equipped with an 8-port POE card, which means when I get the table of data from the router, I also get those 8 switch ports, which happens to be where the IP Cameras & Wifi base stations are attached. A lot of switches will also report the per-port data, so if you've got a SNMP enabled switch, you can likely also do this, by pulling data from that device. 
+
+The WAN & LAN Latency are done by built-in functions of Telegraf itself. 
+
+    [[inputs.ping]]
+       urls = ["www.google.com","192.168.1.1"] 
+
+In this case, I'm pinging google to read as WAN Latency, and a local IP to get LAN Latency. Packet loss and a number of other metics come from this collection as well.
+
+DNS Query time comes from:
+
+     [[inputs.dns_query]]
+       servers = ["8.8.8.8"]
+       domains = ["www.google.com"]
+       record_type = "A"
+
+In this case I have it querying google.com via google's own DNS servers. Gets a very good response time. You'll find some other domains get varying response times, even ones using CloudFlare, which was an interesting discovery. 
+
+Web latency is measured by:
+
+    [[inputs.net_response]]
+       protocol = "tcp"
+       address = "www.google.com:80"
+       timeout = "1s"
+       read_timeout = "1s"
+
+Again, I'm just hitting google here as a WAN metric. It's worth keeping in mind, if you host a website, and want to monitor THAT with a dashboard, most of these tools can be used to give a good idea of what your website is doing.
