@@ -206,4 +206,12 @@ Then you can graph it just like any other metric.
 
 What's next?
 
-ESXi, FreeNAS, HP Switch
+I'm pretty happy with where I've got this to. And my primary reason for a home lab? Learning technologies to use at work. What I've built here I built in a quarter of the time compared to last time I did anything with Grafana, as I didn't use Telegraf. I built a LOT of custom shell scripts and manual POSTS into InfluxDB. This time around, I've only had to do that once. This will help me to move forward with improving the systems I use at work too. 
+
+There's more things I want to do on my homelab one here. To start with, there is a lot of data you can pull from ESXi, and since I've got the hypervisor running, I'd like to make a dashboard to show the health of that. I'd also like to show a ping panel for each of my VM's, to specifically monitor their health directly. 
+
+My storage is run by FreeNAS (see [previous blog post here on Fibre Channel](https://blog.misaunders.com/2017/fibrechannel-comes-to-the-homelab/ "Fibre Channel")), and there is a LOT of data that it can provide via it's own CollectD agent. 
+
+I'm also replacing my Nortel switch with a HP Chassis switch (4208vl) in the coming days, so I'll be experimenting with what SNMP data I can pull from that. Potentially per-port data to each host would be a great dashboard. I'm planning to move to using iSCSI for storage for ESXi, which will put storage traffic on it's own sets of VLANs. Would be great to be able to show that traffic separate from LAN traffic. 
+
+Stay tuned, I'll update a link here when I post the next set. 
