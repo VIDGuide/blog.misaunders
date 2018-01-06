@@ -1,5 +1,6 @@
 ---
 pages:
+- _posts/grafana-update-ibm-x3650-m2-on-ipmi.md
 - _posts/2018-01-04-homelab-dashboard-with-grafana-influxdb-telegraf.md
 - _posts/so-what-s-involved-in-setting-up-a-static-blog-with-a-ui.md
 - _posts/2017-05-26-fibrechannel-comes-to-the-homelab.md
