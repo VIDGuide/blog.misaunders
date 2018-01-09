@@ -20,9 +20,10 @@ fields:
   label: categories
   name: categories
 - type: datetime
-  name: publishdate
-  label: publishdate
-  description: Publish Date
+  name: date
+  label: date
+  description: date
   config:
-    date_format: DD/MM/YYYY
     required: true
+    date_format: DD/MM/YYYY
+    time_format: h:mm A ZZ
