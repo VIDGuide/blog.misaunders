@@ -19,3 +19,10 @@ fields:
 - type: tag_list
   label: categories
   name: categories
+- type: datetime
+  name: publishdate
+  label: publishdate
+  description: Publish Date
+  config:
+    date_format: DD/MM/YYYY
+    required: true
