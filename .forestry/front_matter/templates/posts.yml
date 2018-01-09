@@ -27,3 +27,7 @@ fields:
     required: true
     date_format: DD/MM/YYYY
     time_format: h:mm A ZZ
+- type: text
+  name: title
+  label: title
+  description: title
