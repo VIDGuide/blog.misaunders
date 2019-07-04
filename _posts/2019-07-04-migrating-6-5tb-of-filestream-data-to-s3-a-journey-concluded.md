@@ -7,7 +7,7 @@ tags:
 - Database
 categories:
 - AWS
-date: 2019-07-04 01:00:00 +1100
+date: 2019-07-03 01:00:00 +1100
 title: Migrating 6.5TB of FileStream Data to AWS S3 - A Journey Concluded
 
 ---
