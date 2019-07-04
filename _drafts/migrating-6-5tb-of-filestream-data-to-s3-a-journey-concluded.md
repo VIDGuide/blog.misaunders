@@ -8,7 +8,7 @@ tags:
 categories:
 - AWS
 date: 2019-07-04 01:00:00 +1100
-title: Migrating 6.5TB of FileStream Data to S3 - A journey concluded
+title: Migrating 6.5TB of FileStream Data to AWS S3 - A Journey Concluded
 
 ---
 So, this week concludes our migration to S3 for this component of our system, and it's been a rather epic journey. As a sigh of relief, I made a [post on reddit](https://www.reddit.com/r/aws/comments/c7rygt/finally_finished_a_65tb_database_s3_i_can_sleep/), and was overwhelmed with the response. Over 100 upvotes and 65+ comments, was rather unexpected. 
@@ -104,13 +104,13 @@ We've recently enabled Intelligent Tiering. We rarely ever delete documents. 15+
 
 ![](/uploads/2019/07/04/CW1.png)
 
-This shows 6 months of file count, and storage type. You can see where we enabled Inteligent Tiering. 
+This shows 6 months of file count, and storage type. You can see where we enabled Intelligent Tiering. 
 
 We're now over 8.4Tb in this bucket alone, and there are others too, so a lot has grown since the 6.5Tb started the migration journey. 
 
 #### Conclusions
 
-Well, at the end of the day, I feel like I can sleep better now. Not only do I have my whole production system on a Multi-AZ platform on a really reliable backing, I've now got my biggest worry migrated away from on-prem, away from unreliable backups and underpinning infrastructure, and gained, speed, reliability, durability and cost savings in the mix for the troubles. 
+Well, at the end of the day, I feel like I can sleep better now. Not only do I have my whole production system on a Multi-AZ platform on a really reliable backing, I've now got my biggest worry migrated away from on-premesis, away from unreliable backups and underpinning infrastructure, and gained, speed, reliability, durability and cost savings in the mix for the troubles. 
 
 Could we have done this faster? Of course we could, but to allow for BAU, and as minimal of interruption as possible, the timelines were somewhat needed. 
 
